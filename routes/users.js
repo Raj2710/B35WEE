@@ -106,15 +106,7 @@ router.delete('/request/:id', async(req, res)=>{
   await client.connect();
   try {
     const db = await client.db(dbName)
-    let requests = await db.collection('leads').deleteOne({_id:mongodb.ObjectId(req.params.id)},{
-      $set:{
-        name:req.body.name,
-        email:req.body.email,
-        mobile:req.body.mobile,
-        amount:req.body.amount,
-        purpose:req.body.purpose
-      }
-    });
+    let requests = await db.collection('leads').deleteOne({_id:mongodb.ObjectId(req.params.id)});
     res.send({
       statusCode:200,
       message:"Data Deleted Successfully",
@@ -132,6 +124,5 @@ router.delete('/request/:id', async(req, res)=>{
     client.close()
   }
 });
-
 
 module.exports = router;
