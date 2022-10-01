@@ -2,17 +2,30 @@ var express = require('express');
 var router = express.Router();
 const {mongoose,usersModel} = require('../dbSchema')
 const {mongodb,dbName,dbUrl} = require('../dbConfig')
-const {hashPassowrd,hashCompare} = require('../auth')
+const {hashPassowrd,hashCompare,createToken,jwtDecode,validate,roleAdmin} = require('../auth')
 mongoose.connect(dbUrl)
 
 
-router.get('/', async(req,res)=>{
-  let users = await usersModel.find()
-  res.send({
-    statusCode:200,
-    data:users
-  })
-})  
+router.get('/', validate,roleAdmin,async(req,res)=>{
+  
+  let token = req.headers.authorization.split(" ")[1]
+  let data = await jwtDecode(token)
+  let user = await usersModel.findOne({email:data.email})
+  if (user) {
+    let users = await usersModel.find()
+      res.send({
+        statusCode:200,
+        data:users
+      })
+  }
+  else
+  {
+    res.send({
+      statusCode:400,
+      message:"Unauthorized"
+    })
+  }
+})
 
 router.post('/signup', async(req,res)=>{
   try {
@@ -47,7 +60,10 @@ router.post('/signin',async(req,res)=>{
         let hash = await hashCompare(req.body.password,user[0].password)
 
         if(hash)
-          res.send({statusCode:200,message:"Sign-in successfull!!!"})
+        {
+          let token = await createToken(user[0].email,user[0].role)
+          res.send({statusCode:200,message:"Sign-in successfull!!!",token})
+        }
         else
           res.send({statusCode:400,message:"Invalid Credentials"})
     }
