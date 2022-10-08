@@ -12,7 +12,7 @@ router.get('/', validate,roleAdmin,async(req,res)=>{
   let data = await jwtDecode(token)
   let user = await usersModel.findOne({email:data.email})
   if (user) {
-    let users = await usersModel.find()
+    let users = await usersModel.find({},{password:0,__v:0})
       res.send({
         statusCode:200,
         data:users
