@@ -56,7 +56,8 @@ router.post('/login',async(req,res)=>{
             statusCode:200,
             message:"Login Successfull",
             role:user.role,
-            token
+            token,
+            userId:user._id
           })
         }
        else
