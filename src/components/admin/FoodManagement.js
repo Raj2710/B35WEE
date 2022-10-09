@@ -7,10 +7,12 @@ import axios from 'axios'
 import env from '../../enviroinment'
 import {useNavigate} from 'react-router-dom'
 
-function FoodManagement() {let [name,setName] = useState("")
+function FoodManagement() {
+let [name,setName] = useState("")
 let [price,setPrice] = useState("")
 let [description,setDescription] = useState("")
 let [imageUrl,setImageUrl] = useState("")
+let img = "https://via.placeholder.com/150"
 let navigate = useNavigate()
 
 let [data,setData] = useState([])
@@ -46,7 +48,7 @@ let handleSubmit = async ()=>{
   let res = await axios.post(`${env.apiurl}/add-food`,
   {
     name,
-    price,
+    price:Number(price),
     description,
     imageUrl
   },
@@ -83,7 +85,7 @@ return  <>
     </Form.Group>
 
     <Form.Group className="mb-3">
-      <Form.Control type="text" value={price} placeholder="Price" onChange={(e)=>{setPrice(Number(e.target.value))}}/>
+      <Form.Control type="text" value={price} placeholder="Price" onChange={(e)=>{setPrice(e.target.value)}}/>
     </Form.Group>
     
     <Form.Group className="mb-3">
@@ -104,12 +106,16 @@ return  <>
         <h2>All your Added Foods are here!</h2>
         {
           data.map((e,i)=>{
-            return <div className='card-wrapper' key={i}>
-              <div>{e.name}</div>
-              <div>{e.price}</div>
-              <div>{e.description}</div>
-              <div><img src={e.image} alt=""></img></div>
-              <div><Button onClick={()=>handleDelete(e._id)} variant='danger'>Delete</Button></div>
+            return <div className='card-wrapper ' key={i}>
+              <div className='card-image'>
+                <img src={e.imageUrl?e.imageUrl:img} alt="" width={"150px"} height={"150px"}></img>
+              </div>
+              <div className='card-details'>
+                <h2>{e.name}</h2>
+                <h4>&#8377; {e.price}</h4>
+                <div>{e.description}</div>
+                <div><Button onClick={()=>handleDelete(e._id)} variant='danger'>Delete</Button></div>
+              </div>
             </div>
           })
         }

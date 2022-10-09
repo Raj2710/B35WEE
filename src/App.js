@@ -8,10 +8,14 @@ import Food from './components/users/Food'
 import Login from './components/users/Login'
 import Signup from './components/users/SignUp'
 import Success from './components/users/Success'
+import React, { useState } from 'react';
+export const CartContext = React.createContext();
 
 function App() {
+  let [cart,setCart] = useState([])
   return<>
       <BrowserRouter>
+      <CartContext.Provider value={{cart,setCart}}>
           <Routes>
             <Route path='/dashboard' element={<Dashboard/>}/>
             <Route path='/food-management' element={<FoodManagement/>}/>
@@ -23,6 +27,7 @@ function App() {
             <Route path='/order-success' element={<Success/>}/>
             <Route path='*' element={<Navigate to='/login'/>}/>
           </Routes>
+          </CartContext.Provider>
       </BrowserRouter>
   </>
 }
